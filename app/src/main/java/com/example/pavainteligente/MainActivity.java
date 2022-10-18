@@ -15,9 +15,11 @@ import com.example.pavainteligente.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements Contract.ViewMVP{
 
     private AppBarConfiguration appBarConfiguration;
+    private Contract.PresenterMVP presenter;
     private ActivityMainBinding binding;
 
     @Override
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        presenter = new Presenter(this);
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,5 +73,10 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void setString(String string) {
+
     }
 }
