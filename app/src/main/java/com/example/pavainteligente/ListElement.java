@@ -1,16 +1,22 @@
 package com.example.pavainteligente;
 
-public class ListElement {
+import java.io.Serializable;
+
+public class ListElement implements Serializable {
     public String color;
     public String name;
     public String house;
     public String status;
+    public Double temperature;
+    public Boolean switchStatus;
 
-    public ListElement(String color, String name, String house, String status) {
+    public ListElement(String color, String name, String house, String status, Double temperature, Boolean switchStatus) {
         this.color = color;
         this.name = name;
         this.house = house;
         this.status = status;
+        this.temperature = temperature;
+        this.switchStatus = switchStatus;
     }
 
     public String getColor() {
@@ -44,4 +50,21 @@ public class ListElement {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public Double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
+    }
+
+    public Boolean getSwitchStatus() {
+        return switchStatus;
+    }
+
+    public void setSwitchStatus(Boolean switchStatus) {
+        this.switchStatus = switchStatus;
+    }
+
 }
