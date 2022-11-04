@@ -1,16 +1,23 @@
 package com.example.pavainteligente;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends Activity implements Contract.ViewMVP {
+
+    private ProgressDialog mProgressDlg;
+
+    private Contract.PresenterMVP presenter;
 
     List<ListElement> elements;
 
@@ -19,9 +26,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        presenter = new Presenter(this);
         init();
 
     }
+
 
     public void init() {
         elements = new ArrayList<>();
@@ -41,9 +50,24 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(listAdapter);
     }
 
+
     public void moveToDescription(ListElement item) {
         Intent intent = new Intent(this, DescriptionActivity.class);
         intent.putExtra("ListElement", item);
         startActivity(intent);
+    }
+
+    public void Bluetooth(View view) {
+        Intent intent = new Intent(MainActivity.this, ActivityBluetooth.class);
+        //intent.putExtra("ActivityBluetooth", view);
+        startActivity(intent);
+    }
+
+
+
+    //Este metodo es el que esta en el presenter
+    @Override
+    public void setString(String string) {
+
     }
 }
