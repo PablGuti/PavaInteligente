@@ -3,9 +3,11 @@ package com.example.pavainteligente;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,6 +59,7 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
     public void Bluetooth(View view) {
         Intent intent = new Intent(MainActivity.this, ActivityBluetooth.class);
         //intent.putExtra("ActivityBluetooth", view);

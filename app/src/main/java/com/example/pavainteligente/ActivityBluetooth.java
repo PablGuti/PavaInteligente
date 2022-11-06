@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -31,6 +32,7 @@ import java.util.Set;
  * Activity Principal de la App. Es la primiera activity que se ejecuta cuando el usuario ingresa a la App
  **********************************************************************************************************/
 
+@RequiresApi(api = Build.VERSION_CODES.S)
 public class ActivityBluetooth extends Activity {
 
     private TextView txtEstado;
@@ -44,7 +46,7 @@ public class ActivityBluetooth extends Activity {
 
     private BluetoothAdapter mBluetoothAdapter;
 
-    public static final int MULTIPLE_PERMISSIONS = 10; // code you want.
+    public static final int MULTIPLE_PERMISSIONS = 12; // code you want.
 
     //se crea un array de String con los permisos a solicitar en tiempo de ejecucion
     //Esto se debe realizar a partir de Android 6.0, ya que con verdiones anteriores
@@ -58,7 +60,8 @@ public class ActivityBluetooth extends Activity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.BLUETOOTH_ADVERTISE
+            Manifest.permission.BLUETOOTH_ADVERTISE,
+            Manifest.permission.ACCESS_FINE_LOCATION
     };
 
 
@@ -135,14 +138,13 @@ public class ActivityBluetooth extends Activity {
 
         if (mBluetoothAdapter != null) {
             if (ActivityCompat.checkSelfPermission(ActivityBluetooth.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+
+                do
+                {
+                }
+                while(!checkPermissions());
+
+                //return;
             }
             if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery();
@@ -199,7 +201,7 @@ public class ActivityBluetooth extends Activity {
 
     //Handler que captura los brodacast que emite el SO al ocurrir los eventos del bluethoot
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context,Intent intent) {
 
             //Atraves del Intent obtengo el evento de Bluethoot que informo el broadcast del SO
             String action = intent.getAction();
@@ -258,7 +260,6 @@ public class ActivityBluetooth extends Activity {
         }
     };
 
-
     //Metodo que actua como Listener de los eventos que ocurren en los componentes graficos de la activty
     private View.OnClickListener btnEmparejarListener = new View.OnClickListener() {
         @Override
@@ -305,6 +306,7 @@ public class ActivityBluetooth extends Activity {
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
+
             mBluetoothAdapter.startDiscovery();
         }
     };
@@ -378,7 +380,6 @@ public class ActivityBluetooth extends Activity {
             return true;
         }
 
-
         for (String p:permissions) {
             result = ContextCompat.checkSelfPermission(this,p);
             if (result != PackageManager.PERMISSION_GRANTED) {
@@ -387,7 +388,7 @@ public class ActivityBluetooth extends Activity {
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),MULTIPLE_PERMISSIONS );
-            //return false;
+            return false;
         }
         return true;
     }
