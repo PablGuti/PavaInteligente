@@ -11,11 +11,6 @@ public class Presenter implements Contract.ModelMVP.onSendToPresenter, Contract.
     }
 
     @Override
-    public void onButtonClick() {
-
-    }
-
-    @Override
     public void onDestroy() {
         this.mainView = null; // Anula la conexion con la vista
     }

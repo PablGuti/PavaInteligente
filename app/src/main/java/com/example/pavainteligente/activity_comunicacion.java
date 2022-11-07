@@ -63,6 +63,49 @@ public class activity_comunicacion extends Activity {
         btnEncender.setOnClickListener(btnEncenderListener);
         btnApagar.setOnClickListener(btnApagarListener);
 
+        //Obtengo el parametro, aplicando un Bundle, que me indica la Mac Adress del HC05
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        address = extras.getString("Direccion_Bluethoot");
+
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+        //se realiza la conexion del Bluethoot crea y se conectandose a atraves de un socket
+        try {
+            btSocket = createBluetoothSocket(device);
+        } catch (IOException e) {
+            showToast("La creacción del Socket fallo");
+        }
+        // Establish the Bluetooth socket connection.
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            btSocket.connect();
+        } catch (IOException e) {
+            try {
+                btSocket.close();
+            } catch (IOException e2) {
+                //insert code to deal with this
+            }
+        }
+
+        //Una establecida la conexion con el Hc05 se crea el hilo secundario, el cual va a recibir
+        // los datos de Arduino atraves del bluethoot
+        mConnectedThread = new ConnectedThread(btSocket);
+        mConnectedThread.start();
+
+        //I send a character when resuming.beginning transmission to check device is connected
+        //If it is not an exception will be thrown in the write method and finish() will be called
+        mConnectedThread.write("x");
     }
 
     @Override

@@ -65,12 +65,4 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
         //intent.putExtra("ActivityBluetooth", view);
         startActivity(intent);
     }
-
-
-
-    //Este metodo es el que esta en el presenter
-    @Override
-    public void setString(String string) {
-
-    }
 }
