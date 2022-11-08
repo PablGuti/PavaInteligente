@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class activity_comunicacion extends Activity {
+public class ActivityComunication extends Activity {
 
     Button btnApagar;
     Button btnEncender;

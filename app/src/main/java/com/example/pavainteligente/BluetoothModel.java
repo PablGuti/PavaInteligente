@@ -25,7 +25,8 @@ public class BluetoothModel implements BluetoothContract.Model {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.BLUETOOTH_ADVERTISE,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                //Manifest.permission.ACCESS_BACKGROUND_LOCATION
         };
     }
 

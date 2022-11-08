@@ -18,21 +18,23 @@ import java.util.List;
 public class MainActivity extends Activity implements Contract.ViewMVP {
 
     private ProgressDialog mProgressDlg;
-
     private Contract.PresenterMVP presenter;
-
     List<ListElement> elements;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         presenter = new Presenter(this);
         init();
-
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     public void init() {
         elements = new ArrayList<>();

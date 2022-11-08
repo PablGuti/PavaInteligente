@@ -1,12 +1,16 @@
 package com.example.pavainteligente;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class DescriptionActivity extends AppCompatActivity {
     final static double TEMPERATURA_MEDIA = 197.26;
@@ -18,8 +22,25 @@ public class DescriptionActivity extends AppCompatActivity {
     TextView tempDescriptionTextView;
     ImageView iconImageView;
     ToggleButton switchButton;
-
     Double temperatura;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setBoton();
+        }
+    };
+
+
+    public void setBoton() {
+        if(switchButton.getText()=="true") {
+            Log.i("false","ingreso al false");
+            switchButton.setEnabled(false);
+        }else{
+            Log.i("true","ingreso al true");
+            switchButton.setEnabled(true);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +48,7 @@ public class DescriptionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_description);
 
         ListElement element = (ListElement) getIntent().getSerializableExtra("ListElement");
-
+        Log.i("inicio","ingreso al create");
         titleDescriptionTextView = findViewById(R.id.titleDescriptionTextView);
         houseDescriptionTextView = findViewById(R.id.houseDescriptionTextView);
         statusDescriptionTextView = findViewById(R.id.statusDescriptionTextView);
@@ -58,6 +79,18 @@ public class DescriptionActivity extends AppCompatActivity {
                 iconImageView.setImageResource(R.drawable.ac_unit_fill0_wght400_grad0_opsz48);
             }
         }
+        IntentFilter filter = new IntentFilter();
+        Intent intentService = new Intent(DescriptionActivity.this, ShakeDetector.class);
+        //intentService.setFlags(intentService.FLAG_GRANT_READ_URI_PERMISSION | intentService.FLAG_GRANT_WRITE_URI_PERMISSION);
+        filter.addAction("com.example.pavainteligente.UPDATE");
+        this.registerReceiver(receiver, filter);
+        startService(intentService);
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        Intent intentService = new Intent(DescriptionActivity.this, ShakeDetector.class);
+        stopService(intentService);
     }
 
 }
