@@ -1,25 +1,8 @@
 package com.example.pavainteligente;
 
-import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-public class BluetoothPresenter implements BluetoothContract.Presenter {
-
+public
+class BluetoothPresenter  {
+/*
     public static final int MULTIPLE_PERMISSIONS = 12; // code you want.
 
     private BluetoothContract.View view;
@@ -302,4 +285,5 @@ public class BluetoothPresenter implements BluetoothContract.Presenter {
         }
         return true;
     }
+*/
 }

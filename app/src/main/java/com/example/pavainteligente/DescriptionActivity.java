@@ -3,18 +3,19 @@ package com.example.pavainteligente;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class DescriptionActivity extends AppCompatActivity {
+public class DescriptionActivity extends AppCompatActivity implements Contract.ViewMVP {
     final static double TEMPERATURA_MEDIA = 197.26;
     final static double TEMPERATURA_ALTA = 389.45;
+    private Contract.PresenterMVP presenter;
 
     TextView titleDescriptionTextView;
     TextView houseDescriptionTextView;
@@ -47,7 +48,9 @@ public class DescriptionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
 
-        ListElement element = (ListElement) getIntent().getSerializableExtra("ListElement");
+        ListElement element = new ListElement();
+        element = setString(element);
+        //ListElement element = (ListElement) getIntent().getSerializableExtra("ListElement");
         Log.i("inicio","ingreso al create");
         titleDescriptionTextView = findViewById(R.id.titleDescriptionTextView);
         houseDescriptionTextView = findViewById(R.id.houseDescriptionTextView);
@@ -60,6 +63,7 @@ public class DescriptionActivity extends AppCompatActivity {
         houseDescriptionTextView.setText(element.getHouse());
         statusDescriptionTextView.setText(element.getStatus());
         switchButton.setChecked(element.getSwitchStatus());
+
 
         if(statusDescriptionTextView.getText().equals("Desconectado")) {
             switchButton.setEnabled(false);
@@ -79,13 +83,13 @@ public class DescriptionActivity extends AppCompatActivity {
                 iconImageView.setImageResource(R.drawable.ac_unit_fill0_wght400_grad0_opsz48);
             }
         }
-        IntentFilter filter = new IntentFilter();
-        Intent intentService = new Intent(DescriptionActivity.this, ShakeDetector.class);
-        //intentService.setFlags(intentService.FLAG_GRANT_READ_URI_PERMISSION | intentService.FLAG_GRANT_WRITE_URI_PERMISSION);
-        filter.addAction("com.example.pavainteligente.UPDATE");
-        this.registerReceiver(receiver, filter);
-        startService(intentService);
+        //IntentFilter filter = new IntentFilter();
+        //Intent intentService = new Intent(DescriptionActivity.this, ShakeDetector.class);
+        //filter.addAction("com.example.pavainteligente.UPDATE");
+        //this.registerReceiver(receiver, filter);
+        //startService(intentService);
     }
+
 
     public void onDestroy() {
         super.onDestroy();
@@ -93,4 +97,23 @@ public class DescriptionActivity extends AppCompatActivity {
         stopService(intentService);
     }
 
+    @Override
+    public void onItemClick(ListElement item) {
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.onButtonClick(DescriptionActivity.this);
+            }
+        });
+    }
+
+    @Override
+    public void lanzar(Context mainView) {
+
+    }
+
+    @Override
+    public ListElement setString(ListElement element) {
+        return element;
+    }
 }

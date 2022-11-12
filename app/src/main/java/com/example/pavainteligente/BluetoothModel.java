@@ -1,12 +1,8 @@
 package com.example.pavainteligente;
 
-import android.Manifest;
-import android.bluetooth.BluetoothDevice;
-
-import java.util.ArrayList;
-
-public class BluetoothModel implements BluetoothContract.Model {
-
+public class BluetoothModel //implements BluetoothContract.Model
+{
+/*
     private ArrayList<BluetoothDevice> dispositivos;
     //se crea un array de String con los permisos a solicitar en tiempo de ejecucion
     //Esto se debe realizar a partir de Android 6.0, ya que con verdiones anteriores
@@ -49,4 +45,6 @@ public class BluetoothModel implements BluetoothContract.Model {
     public String[] getPermissions() {
         return permissions;
     }
+
+ */
 }

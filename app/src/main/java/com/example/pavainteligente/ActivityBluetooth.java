@@ -1,40 +1,18 @@
 package com.example.pavainteligente;
 
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /*********************************************************************************************************
  * Activity Principal de la App. Es la primiera activity que se ejecuta cuando el usuario ingresa a la App
  **********************************************************************************************************/
 
 @RequiresApi(api = Build.VERSION_CODES.S)
-public class ActivityBluetooth extends Activity implements BluetoothContract.View {
-
+public class ActivityBluetooth //extends Activity implements BluetoothContract.View
+{
+/*
     private BluetoothPresenter presenter;
 
     private TextView txtEstado;
@@ -189,4 +167,11 @@ public class ActivityBluetooth extends Activity implements BluetoothContract.Vie
     public Activity getViewActivity() {
         return this;
     }
+
+    @Override
+    public void setString(String string) {
+
+    }
+
+ */
 }

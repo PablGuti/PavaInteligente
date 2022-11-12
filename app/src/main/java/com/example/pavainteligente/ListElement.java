@@ -19,6 +19,9 @@ public class ListElement implements Serializable {
         this.switchStatus = switchStatus;
     }
 
+    public ListElement() {
+    }
+
     public String getColor() {
         return color;
     }

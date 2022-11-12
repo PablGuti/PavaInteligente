@@ -47,6 +47,7 @@ public class ActivityComunication extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comunicacion);
 
+
         //Se definen los componentes del layout
         btnApagar = (Button) findViewById(R.id.btnApagar);
         btnEncender = (Button) findViewById(R.id.btnEncender);
@@ -80,13 +81,7 @@ public class ActivityComunication extends Activity {
         // Establish the Bluetooth socket connection.
         try {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+
                 return;
             }
             btSocket.connect();
@@ -131,13 +126,7 @@ public class ActivityComunication extends Activity {
         // Establish the Bluetooth socket connection.
         try {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+
                 return;
             }
             btSocket.connect();
@@ -176,14 +165,7 @@ public class ActivityComunication extends Activity {
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return TODO;
+
         }
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
     }
