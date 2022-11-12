@@ -1,22 +1,19 @@
 package com.example.pavainteligente;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
-import android.widget.Toast;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.UUID;
 
-public class Model extends Activity implements  Contract.ModelMVP {
+public class Model extends Thread implements  Contract.ModelMVP {
 
     private ListElement element = new ListElement("#FF0000", "Pava 1", "Lab 266", "Disponible", 920.01, false);
     private Handler bluetoothIn;
@@ -29,6 +26,7 @@ public class Model extends Activity implements  Contract.ModelMVP {
     private ConnectedThread mConnectedThread;
     private final Presenter presenter;
     private final Contract.ViewMVP view;
+    private final BluetoothDevice mmDevice;
 
     // SPP UUID service  - Funciona en la mayoria de los dispositivos
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -36,11 +34,73 @@ public class Model extends Activity implements  Contract.ModelMVP {
     // String for MAC address del Hc05
     private static String address = null;
 
+    @SuppressLint("MissingPermission")
     public Model(Presenter presenter, Contract.ViewMVP view) {
         this.presenter = presenter;
         this.view = view;
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:B7:6E
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);// devices.get(0);//
+            // Use a temporary object that is later assigned to mmSocket
+            // because mmSocket is final.
+            BluetoothSocket tmp = null;
+            mmDevice = device;
+
+            try {
+                // Get a BluetoothSocket to connect with the given BluetoothDevice.
+                // MY_UUID is the app's UUID string, also used in the server code.
+                tmp = device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+            } catch (IOException e) {
+                Log.e("ERROR", "Socket's create() method failed", e);
+            }
+            btSocket = tmp;
+            run();
+        }
+
+    @SuppressLint("MissingPermission")
+    public void run() {
+        // Cancel discovery because it otherwise slows down the connection.
+        btAdapter.cancelDiscovery();
+
+        try {
+            // Connect to the remote device through the socket. This call blocks
+            // until it succeeds or throws an exception.
+            btSocket.connect();
+        } catch (IOException connectException) {
+            // Unable to connect; close the socket and return.
+            try {
+                btSocket.close();
+            } catch (IOException closeException) {
+                Log.e("error", "Could not close the client socket", closeException);
+            }
+            return;
+        }
+
+        // The connection attempt succeeded. Perform work associated with
+        // the connection in a separate thread.
+        if (btSocket != null) {
+            // A connection was accepted. Perform work associated with
+            // the connection in a separate thread.
+            //manageMyConnectedSocket(btSocket);
+            try {
+                btSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //break;
+        }
     }
+
+    // Closes the client socket and causes the thread to finish.
+    public void cancel() {
+        try {
+            btSocket.close();
+        } catch (IOException e) {
+            Log.e("ERROR", "Could not close the client socket", e);
+        }
+    }
+
 
 
     @Override
@@ -48,7 +108,11 @@ public class Model extends Activity implements  Contract.ModelMVP {
 
         if (!verificarConexion()) {
 
-            inicializaBluetooth();
+            try {
+                inicializaBluetooth();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             encender();
             element.switchStatus = true;
         } else {
@@ -73,7 +137,11 @@ public class Model extends Activity implements  Contract.ModelMVP {
 
 
     @SuppressLint("MissingPermission")
-    private void inicializaBluetooth() {
+    private void inicializaBluetooth() throws IOException {
+
+
+
+        /*
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
          //getViewActivity().startActivityForResult(intent, 1000);
         ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
@@ -89,32 +157,30 @@ public class Model extends Activity implements  Contract.ModelMVP {
 
         //Intent intent = getIntent();
         //Bundle extras = intent.getExtras();
-        //address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:B7:6E
-        //address ="00:21:11:01:b7:6e";
-        //address = "D5:0C:F7:36:46:C5"; SMARTBAND
-        BluetoothDevice device = devices.get(0);//btAdapter.getRemoteDevice(address);
+
         //bluetoothIn = Handler_Msg_Hilo_Principal();
         btAdapter.startDiscovery();
         btAdapter.cancelDiscovery();
         if (btAdapter.isDiscovering()) {
             btAdapter.cancelDiscovery();
         }
+        btSocket = device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+        int i = 0;
+        do {
+            try {
+                btSocket.connect();
 
-        try {
-            //resetConnection();
+            } catch (IOException e) {
+                btSocket.close();
+            }
+            i++;
+        }while (!btSocket.isConnected() && i<10);
+        mConnectedThread = new ConnectedThread(btSocket);
+        mConnectedThread.start();
+        mConnectedThread.write("c");
+        btSocket.close();
 
-            btSocket = createBluetoothSocket(device);
-            //btSocket.close();
-
-            btSocket.connect();
-            mConnectedThread = new ConnectedThread(btSocket);
-            mConnectedThread.start();
-            mConnectedThread.write("c");
-        } catch (IOException e) {
-            //showToast("La creacción del Socket fallo");
-            //btSocket.close();
-        }
-
+         */
     }
 
     //Llamar cuando se ejecute el onPause en la view
@@ -237,13 +303,13 @@ public class Model extends Activity implements  Contract.ModelMVP {
             } catch (IOException e) {
                 //if you cannot write, close the application
                // showToast("La conexion fallo");
-                finish();
+                //finish();
             }
         }
     }
 
     private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

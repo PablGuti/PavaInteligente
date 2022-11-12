@@ -63,6 +63,7 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
     private View.OnClickListener btnPavaListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+                //inicializaBluetooth();
             presenter.onButtonClick(MainActivity.this);
             elements = new ListElement();
             Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
@@ -120,4 +121,36 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
         return true;
     }
 
+/*
+    @SuppressLint("MissingPermission")
+    private void inicializaBluetooth() throws IOException {
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothSocket btSocket;
+        UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        String address = null;
+        address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:B7:6E
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);// devices.get(0);//
+        if (!btAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, RESULT_OK);
+        }
+
+        btSocket = device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+        int i = 0;
+        do {
+            try {
+                btSocket.connect();
+
+            } catch (IOException e) {
+                //btSocket.close();
+            }
+            i++;
+            System.out.println(btSocket.isConnected());
+        }while (!btSocket.isConnected() && i<10);
+       // mConnectedThread = new Model.ConnectedThread(btSocket);
+        //mConnectedThread.start();
+        //mConnectedThread.write("c");
+        btSocket.close();
+    }
+*/
 }
