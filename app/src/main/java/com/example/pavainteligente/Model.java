@@ -85,16 +85,18 @@ public class Model extends Activity implements Contract.ModelMVP {
         //Obtenemos todos los dispositivos bluetooth
         //vinculados
         for (BluetoothDevice d : btAdapter.getBondedDevices()){
-            devices.add(d);
+            if(d.getAddress().equals("00:21:11:01:b7:6e")){
+                devices.add(d);
+            }
         }
-
 
         bluetoothIn = Handler_Msg_Hilo_Principal();
         Intent intent = getIntent();
         //Bundle extras = intent.getExtras();
-        //address = "00:21:11:01:b7:6e";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:b7:6e
-        address ="00:21:11:01:b7:6e";
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        //address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:b7:6e
+        //address ="00:21:11:01:b7:6e";
+
+        BluetoothDevice device = devices.get(0);//btAdapter.getRemoteDevice(address);
 
         try {
             btSocket = createBluetoothSocket(device);
@@ -103,10 +105,7 @@ public class Model extends Activity implements Contract.ModelMVP {
         }
 
         try {
-           // if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-           //     return;
-           // }
-            resetConnection();
+            //resetConnection();
             btSocket.connect();
             mConnectedThread = new ConnectedThread(btSocket);
             mConnectedThread.start();
@@ -114,6 +113,7 @@ public class Model extends Activity implements Contract.ModelMVP {
 
         } catch (IOException e) {
             try {
+                showToast("Fallo la conexion");
                 btSocket.close();
             } catch (IOException e2) {
                 //insert code to deal with this
