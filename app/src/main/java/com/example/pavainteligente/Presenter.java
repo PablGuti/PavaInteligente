@@ -12,7 +12,7 @@ public class Presenter extends Activity implements Contract.ModelMVP.OnSendToPre
 
     public Presenter(Contract.ViewMVP mainView){
         this.view = mainView;
-        this.model = new Model();
+        this.model = new Model(this, this.view);
     }
 
 

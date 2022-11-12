@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -17,17 +16,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Model extends Activity implements Contract.ModelMVP {
+public class Model extends Activity implements  Contract.ModelMVP {
 
     private ListElement element = new ListElement("#FF0000", "Pava 1", "Lab 266", "Disponible", 920.01, false);
     private Handler bluetoothIn;
-    final int handlerState = 0; //used to identify handler message
-    private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
+    private final int handlerState = 0; //used to identify handler message
+    private final BluetoothAdapter btAdapter;
+    private BluetoothSocket btSocket;
     private StringBuilder recDataString = new StringBuilder();
-    private InputStream  mBTInputStream  = null;
+    private InputStream mBTInputStream = null;
     private OutputStream mBTOutputStream = null;
     private ConnectedThread mConnectedThread;
+    private final Presenter presenter;
+    private final Contract.ViewMVP view;
 
     // SPP UUID service  - Funciona en la mayoria de los dispositivos
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -35,90 +36,85 @@ public class Model extends Activity implements Contract.ModelMVP {
     // String for MAC address del Hc05
     private static String address = null;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Model(Presenter presenter, Contract.ViewMVP view) {
+        this.presenter = presenter;
+        this.view = view;
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
+
 
     @Override
     public void sendMessage(OnSendToPresenter presenter, Context context) {
 
-        if(!verificarConexion()){
+        if (!verificarConexion()) {
 
             inicializaBluetooth();
             encender();
             element.switchStatus = true;
-        }else{
+        } else {
 
         }
         presenter.onFinished(element);
     }
 
-    public boolean verificarConexion(){
-        if(btSocket == null){
+    public boolean verificarConexion() {
+        if (btSocket == null) {
             return false;
-        }else
+        } else
             return true;
     }
 
-    public boolean estadoPava(){
-        if(btSocket.isConnected()){
+    public boolean estadoPava() {
+        if (btSocket.isConnected()) {
             return true;
-        }else
+        } else
             return false;
     }
 
-    @Override
-    public void conectar(OnSendToPresenter presenter) {
-
-    }
 
     @SuppressLint("MissingPermission")
     private void inicializaBluetooth() {
-
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+         //getViewActivity().startActivityForResult(intent, 1000);
         ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (btAdapter == null)
             return;
-
         //Obtenemos todos los dispositivos bluetooth
         //vinculados
-        for (BluetoothDevice d : btAdapter.getBondedDevices()){
-            if(d.getAddress().equals("00:21:11:01:b7:6e")){
+        for (BluetoothDevice d : btAdapter.getBondedDevices()) {
+            if (d.getAddress().equals("35:0B:68:DA:0A:2F")) {
                 devices.add(d);
             }
         }
 
-        bluetoothIn = Handler_Msg_Hilo_Principal();
-        Intent intent = getIntent();
+        //Intent intent = getIntent();
         //Bundle extras = intent.getExtras();
-        //address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:b7:6e
+        //address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:B7:6E
         //address ="00:21:11:01:b7:6e";
-
+        //address = "D5:0C:F7:36:46:C5"; SMARTBAND
         BluetoothDevice device = devices.get(0);//btAdapter.getRemoteDevice(address);
-
-        try {
-            btSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
-            showToast("La creacción del Socket fallo");
+        //bluetoothIn = Handler_Msg_Hilo_Principal();
+        btAdapter.startDiscovery();
+        btAdapter.cancelDiscovery();
+        if (btAdapter.isDiscovering()) {
+            btAdapter.cancelDiscovery();
         }
 
         try {
             //resetConnection();
+
+            btSocket = createBluetoothSocket(device);
+            //btSocket.close();
+
             btSocket.connect();
             mConnectedThread = new ConnectedThread(btSocket);
             mConnectedThread.start();
             mConnectedThread.write("c");
-
         } catch (IOException e) {
-            try {
-                showToast("Fallo la conexion");
-                btSocket.close();
-            } catch (IOException e2) {
-                //insert code to deal with this
-            }
+            //showToast("La creacción del Socket fallo");
+            //btSocket.close();
         }
+
     }
 
     //Llamar cuando se ejecute el onPause en la view
@@ -250,5 +246,8 @@ public class Model extends Activity implements Contract.ModelMVP {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void conectar(OnSendToPresenter presenter) {
 
+    }
 }

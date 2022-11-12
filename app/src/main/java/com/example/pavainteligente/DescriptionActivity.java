@@ -1,6 +1,5 @@
 package com.example.pavainteligente;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,13 +24,13 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
     ToggleButton switchButton;
     Double temperatura;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    /*private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             setBoton();
         }
     };
-
+*/
 
     public void setBoton() {
         if(switchButton.getText()=="true") {
@@ -62,7 +61,7 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         titleDescriptionTextView.setText(element.getName());
         houseDescriptionTextView.setText(element.getHouse());
         statusDescriptionTextView.setText(element.getStatus());
-        switchButton.setChecked(element.getSwitchStatus());
+        //switchButton.setChecked(element.getSwitchStatus());
 
 
         if(statusDescriptionTextView.getText().equals("Desconectado")) {

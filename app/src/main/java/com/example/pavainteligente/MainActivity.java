@@ -114,7 +114,7 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
             }
         }
         if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this , listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 100);
+            ActivityCompat.requestPermissions(this , listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 12);
             return false;
         }
         return true;
