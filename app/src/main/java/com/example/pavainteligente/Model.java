@@ -93,8 +93,8 @@ public class Model extends Activity implements Contract.ModelMVP {
         Intent intent = getIntent();
         //Bundle extras = intent.getExtras();
         //address = "00:21:11:01:b7:6e";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:b7:6e
-        //address ="D5:0C:F7:36:46:C5";
-        BluetoothDevice device = devices.get(0);//btAdapter.getRemoteDevice(address);
+        address ="00:21:11:01:b7:6e";
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
 
         try {
             btSocket = createBluetoothSocket(device);
