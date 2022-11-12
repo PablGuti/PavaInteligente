@@ -82,7 +82,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
         if (btSocket != null) {
             // A connection was accepted. Perform work associated with
             // the connection in a separate thread.
-            //manageMyConnectedSocket(btSocket);
+            new ConnectedThread(btSocket);
             try {
                 btSocket.close();
             } catch (IOException e) {
@@ -138,8 +138,6 @@ public class Model extends Thread implements  Contract.ModelMVP {
 
     @SuppressLint("MissingPermission")
     private void inicializaBluetooth() throws IOException {
-
-
 
         /*
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
