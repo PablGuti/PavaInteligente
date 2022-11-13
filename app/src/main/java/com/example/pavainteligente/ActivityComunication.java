@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class ActivityComunication extends Activity {
+public class ActivityComunication extends Activity implements ComunicationContract.View {
 
     Button btnApagar;
     Button btnEncender;
@@ -218,6 +219,62 @@ public class ActivityComunication extends Activity {
 
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    /** metodos de view que va a llamar el presenter **/
+    @Override
+    public void updateTemperatura(String temperatura) {
+
+    }
+
+    @Override
+    public void showSinAgua() {
+
+    }
+
+    @Override
+    public void showConAgua() {
+
+    }
+
+    @Override
+    public void showDesconectado() {
+
+    }
+
+    @Override
+    public void showEncendido() {
+
+    }
+
+    @Override
+    public void showApagado() {
+
+    }
+
+    @Override
+    public void showMensajeError(String mensaje) {
+        showToast(mensaje);
+    }
+
+    @Override
+    public Context getContext() {
+        return this.getApplicationContext();
+    }
+
+    @Override
+    public void onItemClick(ListElement item) {
+
+    }
+
+    @Override
+    public void lanzar(Context mainView) {
+
+    }
+
+    @Override
+    public ListElement setString(ListElement element) {
+        return null;
     }
 
     //******************************************** Hilo secundario del Activity**************************************
