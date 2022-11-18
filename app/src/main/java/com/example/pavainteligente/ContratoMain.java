@@ -2,9 +2,9 @@ package com.example.pavainteligente;
 
 import android.content.Context;
 
-public interface Contract {
+public interface ContratoMain {
 
-    interface ViewMVP{
+    interface ViewMain{
         void cambiarColorR();
         void cambiarColorB();
         void cambiarColorY();
@@ -16,19 +16,18 @@ public interface Contract {
         Pava setString(Pava element);
     }
 
-    interface ModelMVP{
+    interface ModelMain{
         interface OnSendToPresenter{
             void onFinished(Pava element);
         }
-        void sendMessage(Contract.ModelMVP.OnSendToPresenter presenter,Context context);
-        void desconectar();
+
     }
 
-    interface PresenterMVP{
-        void onButtonClick(Context context);
+    interface PresenterMain{
         void onDestroy();
-
+        void onpausa();
+        void setUpSensormanager();
+        void listener();
 
     }
-
 }

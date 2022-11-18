@@ -33,12 +33,6 @@
         android:theme="@style/Theme.PavaInteligente"
         tools:targetApi="31">
 
-        <service
-            android:name=".ShakeDetector"
-            android:enabled="true"
-            android:exported="true"
-            >
-        </service>
 
         <activity
             android:name=".MainActivity"
@@ -50,31 +44,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:exported="true"
-            android:name=".DeviceListActivity"
-            android:parentActivityName=".ActivityBluetooth">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ActivityBluetooth"
-            android:exported="true"
-            android:parentActivityName=".DeviceListActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ActivityComunication"
-            android:exported="true"
-            android:label="Bluetooth"
-            android:parentActivityName=".MainActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
+
         <activity
             android:exported="true"
             android:name=".DescriptionActivity"

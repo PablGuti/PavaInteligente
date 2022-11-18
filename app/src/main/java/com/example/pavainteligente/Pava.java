@@ -2,7 +2,7 @@ package com.example.pavainteligente;
 
 import java.io.Serializable;
 
-public class ListElement implements Serializable {
+public class Pava implements Serializable {
     public String color;
     public String name;
     public String house;
@@ -10,7 +10,7 @@ public class ListElement implements Serializable {
     public Double temperature;
     public Boolean switchStatus;
 
-    public ListElement(String color, String name, String house, String status, Double temperature, Boolean switchStatus) {
+    public Pava(String color, String name, String house, String status, Double temperature, Boolean switchStatus) {
         this.color = color;
         this.name = name;
         this.house = house;
@@ -19,7 +19,7 @@ public class ListElement implements Serializable {
         this.switchStatus = switchStatus;
     }
 
-    public ListElement() {
+    public Pava() {
     }
 
     public String getColor() {
@@ -59,7 +59,7 @@ public class ListElement implements Serializable {
     }
 
     public void setTemperature(Double temperature) {
-        this.temperature = temperature;
+        this.temperature = ((5.0 / 1024 * temperature)*100)-50;
     }
 
     public Boolean getSwitchStatus() {

@@ -1,32 +1,55 @@
 package com.example.pavainteligente;
 
+import static androidx.core.content.ContextCompat.checkSelfPermission;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Model extends Thread implements  Contract.ModelMVP {
 
-    private ListElement element = new ListElement("#FF0000", "Pava 1", "Lab 266", "Disponible", 920.01, false);
+    private Pava element;
     private Handler bluetoothIn;
-    private final int handlerState = 0; //used to identify handler message
-    private final BluetoothAdapter btAdapter;
+    private  int handlerState = 0;
+    private  BluetoothAdapter btAdapter;
     private BluetoothSocket btSocket;
     private StringBuilder recDataString = new StringBuilder();
     private InputStream mBTInputStream = null;
     private OutputStream mBTOutputStream = null;
     private ConnectedThread mConnectedThread;
-    private final Presenter presenter;
-    private final Contract.ViewMVP view;
-    private final BluetoothDevice mmDevice;
+    private  Presenter presenter;
+    private  Contract.ViewMVP view;
+    private  BluetoothDevice device;
+    private int aux=0;
+    private final String[] permissions = new String[]{
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.BLUETOOTH_ADVERTISE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
 
     // SPP UUID service  - Funciona en la mayoria de los dispositivos
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -36,62 +59,14 @@ public class Model extends Thread implements  Contract.ModelMVP {
 
     @SuppressLint("MissingPermission")
     public Model(Presenter presenter, Contract.ViewMVP view) {
+        element = new Pava("#FF0000", "Pava 1", "Lab 266", "No disponible", 0.0, false);
         this.presenter = presenter;
         this.view = view;
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        address = "35:0B:68:DA:0A:2F";//extras.getString("Direccion_Bluethoot"); //MAC 00:21:11:01:B7:6E
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);// devices.get(0);//
-            // Use a temporary object that is later assigned to mmSocket
-            // because mmSocket is final.
-            BluetoothSocket tmp = null;
-            mmDevice = device;
-
-            try {
-                // Get a BluetoothSocket to connect with the given BluetoothDevice.
-                // MY_UUID is the app's UUID string, also used in the server code.
-                tmp = device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-            } catch (IOException e) {
-                Log.e("ERROR", "Socket's create() method failed", e);
-            }
-            btSocket = tmp;
-            run();
-        }
-
-    @SuppressLint("MissingPermission")
-    public void run() {
-        // Cancel discovery because it otherwise slows down the connection.
-        btAdapter.cancelDiscovery();
-
-        try {
-            // Connect to the remote device through the socket. This call blocks
-            // until it succeeds or throws an exception.
-            btSocket.connect();
-        } catch (IOException connectException) {
-            // Unable to connect; close the socket and return.
-            try {
-                btSocket.close();
-            } catch (IOException closeException) {
-                Log.e("error", "Could not close the client socket", closeException);
-            }
-            return;
-        }
-
-        // The connection attempt succeeded. Perform work associated with
-        // the connection in a separate thread.
-        if (btSocket != null) {
-            // A connection was accepted. Perform work associated with
-            // the connection in a separate thread.
-            new ConnectedThread(btSocket);
-            try {
-                btSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //break;
-        }
+        checkPermissions();
     }
 
+    public Model(PresenterMain presenterMain, ContratoMain.ViewMain mView) {
+    }
     // Closes the client socket and causes the thread to finish.
     public void cancel() {
         try {
@@ -105,10 +80,11 @@ public class Model extends Thread implements  Contract.ModelMVP {
 
     @Override
     public void sendMessage(OnSendToPresenter presenter, Context context) {
-
-        if (!verificarConexion()) {
-
+        if (!verificarConexion() && aux<2) {
+            System.out.println("soy el aux !!!!!!-......................");
+            System.out.println(aux);
             try {
+                aux=2;
                 inicializaBluetooth();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -116,13 +92,15 @@ public class Model extends Thread implements  Contract.ModelMVP {
             encender();
             element.switchStatus = true;
         } else {
-
+                aux=0;
+                apagar();
+                element.switchStatus = false;
         }
         presenter.onFinished(element);
     }
 
     public boolean verificarConexion() {
-        if (btSocket == null) {
+        if (btSocket==null) {
             return false;
         } else
             return true;
@@ -138,10 +116,11 @@ public class Model extends Thread implements  Contract.ModelMVP {
 
     @SuppressLint("MissingPermission")
     private void inicializaBluetooth() throws IOException {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        /*
-        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-         //getViewActivity().startActivityForResult(intent, 1000);
+        address = "00:21:11:01:B7:6E";//extras.getString("Direccion_Bluethoot"); //MAC 35:0B:68:DA:0A:2F
+        device = btAdapter.getRemoteDevice(address);// devices.get(0);//
+        //getViewActivity().startActivityForResult(intent, 1000);
         ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
         if (btAdapter == null)
             return;
@@ -153,10 +132,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
             }
         }
 
-        //Intent intent = getIntent();
-        //Bundle extras = intent.getExtras();
-
-        //bluetoothIn = Handler_Msg_Hilo_Principal();
+        bluetoothIn = Handler_Msg_Hilo_Principal();
         btAdapter.startDiscovery();
         btAdapter.cancelDiscovery();
         if (btAdapter.isDiscovering()) {
@@ -175,10 +151,8 @@ public class Model extends Thread implements  Contract.ModelMVP {
         }while (!btSocket.isConnected() && i<10);
         mConnectedThread = new ConnectedThread(btSocket);
         mConnectedThread.start();
-        mConnectedThread.write("c");
-        btSocket.close();
 
-         */
+
     }
 
     //Llamar cuando se ejecute el onPause en la view
@@ -214,6 +188,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
     }
 
     //Handler que sirve que permite mostrar datos en el Layout al hilo secundario
+    @SuppressLint("HandlerLeak")
     private Handler Handler_Msg_Hilo_Principal ()
     {
         return new Handler() {
@@ -232,7 +207,8 @@ public class Model extends Thread implements  Contract.ModelMVP {
                     {
                         String dataInPrint = recDataString.substring(0, endOfLineIndex);
                         //txtPotenciometro.setText(dataInPrint);
-
+                        element.setTemperature(Double.parseDouble(dataInPrint));
+                        presenter.onFinished(element);
                         recDataString.delete(0, recDataString.length());
                     }
                 }
@@ -254,7 +230,6 @@ public class Model extends Thread implements  Contract.ModelMVP {
     /////////////////////////////////////CLASES SOPORTE PARA CONECTAR BLUETOOTH//////////////////////////////////////
     private class ConnectedThread extends Thread {
 
-
         //Constructor de la clase del hilo secundario
         public ConnectedThread(BluetoothSocket socket) {
             InputStream tmpIn = null;
@@ -273,7 +248,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
 
         //metodo run del hilo, que va a entrar en una espera activa para recibir los msjs del HC05
         public void run() {
-            byte[] buffer = new byte[256];
+            byte[] buffer = new byte[5];
             int bytes;
 
             //el hilo secundario se queda esperando mensajes del HC05
@@ -283,9 +258,10 @@ public class Model extends Thread implements  Contract.ModelMVP {
                     bytes = mBTInputStream.read(buffer);
                     String readMessage = new String(buffer, 0, bytes);
 
-                    //se muestran en el layout de la activity, utilizando el handler del hilo
-                    // principal antes mencionado
-                    bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
+                    bluetoothIn.obtainMessage(handlerState,bytes,-1,readMessage).sendToTarget();
+
+
+
                 } catch (IOException e) {
                     break;
                 }
@@ -300,7 +276,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
                 mBTOutputStream.write(msgBuffer);                //write bytes over BT connection via outstream
             } catch (IOException e) {
                 //if you cannot write, close the application
-               // showToast("La conexion fallo");
+                // showToast("La conexion fallo");
                 //finish();
             }
         }
@@ -311,7 +287,37 @@ public class Model extends Thread implements  Contract.ModelMVP {
     }
 
     @Override
-    public void conectar(OnSendToPresenter presenter) {
-
+    public void desconectar() {
+        apagar();
+        try {
+            cerrarSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    //Metodo que chequea si estan habilitados los permisos
+    private  boolean checkPermissions() {
+        int result;
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+
+        for (String p:permissions) {
+            //CustomPermission needed;//:BT_PERMISSIONS_NEEDED
+            result = checkSelfPermission((Context) view,p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions((Activity) view, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 12);
+            return false;
+        }
+        return true;
+    }
+
 }

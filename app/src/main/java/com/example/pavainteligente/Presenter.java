@@ -1,25 +1,22 @@
 package com.example.pavainteligente;
 
-import android.app.Activity;
 import android.content.Context;
 
-public class Presenter extends Activity implements Contract.ModelMVP.OnSendToPresenter, Contract.PresenterMVP{
+public class Presenter  implements Contract.ModelMVP.OnSendToPresenter, Contract.PresenterMVP{
 
-    private Contract.ViewMVP view;
+    private Contract.ViewMVP mView;
     private final Contract.ModelMVP model;
     private boolean conexion = false;
 
 
     public Presenter(Contract.ViewMVP mainView){
-        this.view = mainView;
-        this.model = new Model(this, this.view);
+        this.mView = mainView;
+        this.model = new Model(this, this.mView);
     }
 
-
     @Override
-    public void onFinished(ListElement element) {
-
-        this.view.setString(element);
+    public void onFinished(Pava element) {
+        this.mView.setString(element);
     }
 
     @Override
@@ -27,13 +24,10 @@ public class Presenter extends Activity implements Contract.ModelMVP.OnSendToPre
         this.model.sendMessage( this,context);
     }
 
-    @Override
+
     public void onDestroy() {
-        super.onDestroy();
-        this.view = null;
+        this.model.desconectar();
+        this.mView = null;
     }
-
-
-
 
 }
