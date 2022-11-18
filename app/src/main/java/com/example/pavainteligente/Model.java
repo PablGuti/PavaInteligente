@@ -21,23 +21,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class Model extends Thread implements  Contract.ModelMVP {
+public class Model extends Thread implements Contract.ModelMVP {
 
     private Pava element;
     private Handler bluetoothIn;
-    private  int handlerState = 0;
-    private  BluetoothAdapter btAdapter;
+    private int handlerState = 0;
+    private BluetoothAdapter btAdapter;
     private BluetoothSocket btSocket;
     private StringBuilder recDataString = new StringBuilder();
     private InputStream mBTInputStream = null;
     private OutputStream mBTOutputStream = null;
     private ConnectedThread mConnectedThread;
-    private  Presenter presenter;
-    private  Contract.ViewMVP view;
-    private  BluetoothDevice device;
-    private int aux=0;
+    private Presenter presenter;
+    private Contract.ViewMVP view;
+    private BluetoothDevice device;
+    private int aux = 0;
     private final String[] permissions = new String[]{
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
@@ -51,19 +50,44 @@ public class Model extends Thread implements  Contract.ModelMVP {
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
 
-    // SPP UUID service  - Funciona en la mayoria de los dispositivos
-    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-    // String for MAC address del Hc05
-    private static String address = null;
 
     @SuppressLint("MissingPermission")
     public Model(Presenter presenter, Contract.ViewMVP view) {
-        element = new Pava("#FF0000", "Pava 1", "Lab 266", "No disponible", 0.0, false);
         this.presenter = presenter;
         this.view = view;
         checkPermissions();
+        this.element = obtenerPava();
+        //validarConexion();
     }
+
+    @Override
+    public boolean validarBluetoothEncendido(Presenter presenter){
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!btAdapter.isEnabled()){
+            presenter.notificar("No esta encendido el bluetooth");
+            return false;
+        }
+        return true;
+    }
+
+    @SuppressLint("MissingPermission")
+    private boolean validarConexion() {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        //address = "00:21:11:01:B7:6E";//extras.getString("Direccion_Bluethoot"); //MAC 35:0B:68:DA:0A:2F
+        device = btAdapter.getRemoteDevice(Constants.address);
+
+        ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+
+        //Obtenemos todos los dispositivos bluetooth
+        //vinculados
+        for (BluetoothDevice d : btAdapter.getBondedDevices()) {
+            if (d.getAddress().equals(Constants.address)) {
+                devices.add(d);
+            }
+        }
+        return true;
+    }
+
 
     public Model(PresenterMain presenterMain, ContratoMain.ViewMain mView) {
     }
@@ -79,7 +103,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
 
 
     @Override
-    public void sendMessage(OnSendToPresenter presenter, Context context) {
+    public void sendMessage(OnSendToPresenter presenter) {
         if (!verificarConexion() && aux<2) {
             System.out.println("soy el aux !!!!!!-......................");
             System.out.println(aux);
@@ -90,7 +114,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
                 e.printStackTrace();
             }
             encender();
-            element.switchStatus = true;
+
         } else {
                 aux=0;
                 apagar();
@@ -117,42 +141,21 @@ public class Model extends Thread implements  Contract.ModelMVP {
     @SuppressLint("MissingPermission")
     private void inicializaBluetooth() throws IOException {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        address = "00:21:11:01:B7:6E";//extras.getString("Direccion_Bluethoot"); //MAC 35:0B:68:DA:0A:2F
-        device = btAdapter.getRemoteDevice(address);// devices.get(0);//
-        //getViewActivity().startActivityForResult(intent, 1000);
-        ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
-        if (btAdapter == null)
-            return;
-        //Obtenemos todos los dispositivos bluetooth
-        //vinculados
-        for (BluetoothDevice d : btAdapter.getBondedDevices()) {
-            if (d.getAddress().equals("35:0B:68:DA:0A:2F")) {
-                devices.add(d);
-            }
-        }
-
+        device = btAdapter.getRemoteDevice(Constants.address);
         bluetoothIn = Handler_Msg_Hilo_Principal();
-        btAdapter.startDiscovery();
         btAdapter.cancelDiscovery();
-        if (btAdapter.isDiscovering()) {
-            btAdapter.cancelDiscovery();
-        }
-        btSocket = device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+        btSocket = device.createRfcommSocketToServiceRecord(Constants.BTMODULEUUID);
         int i = 0;
         do {
             try {
                 btSocket.connect();
-
             } catch (IOException e) {
                 btSocket.close();
             }
             i++;
-        }while (!btSocket.isConnected() && i<10);
+        }while (!btSocket.isConnected() && i<5);
         mConnectedThread = new ConnectedThread(btSocket);
         mConnectedThread.start();
-
-
     }
 
     //Llamar cuando se ejecute el onPause en la view
@@ -161,33 +164,6 @@ public class Model extends Thread implements  Contract.ModelMVP {
     }
 
 
-    private synchronized void resetConnection() {
-        if (mBTInputStream != null) {
-            try {mBTInputStream.close();} catch (Exception e) {}
-            mBTInputStream = null;
-        }
-
-        if (mBTOutputStream != null) {
-            try {mBTOutputStream.close();} catch (Exception e) {}
-            mBTOutputStream = null;
-        }
-
-        if (btSocket != null) {
-            try {btSocket.close();} catch (Exception e) {}
-            btSocket = null;
-        }
-
-    }
-
-    //Metodo que crea el socket bluethoot
-    @SuppressLint("MissingPermission")
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-        //}
-        return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-    }
-
-    //Handler que sirve que permite mostrar datos en el Layout al hilo secundario
     @SuppressLint("HandlerLeak")
     private Handler Handler_Msg_Hilo_Principal ()
     {
@@ -218,10 +194,12 @@ public class Model extends Thread implements  Contract.ModelMVP {
     }
 
     public void encender(){
+        element.switchStatus = true;
         mConnectedThread.write("c");
     }
 
     public void apagar(){
+        element.switchStatus = false;
         mConnectedThread.write("a");
     }
 
@@ -282,9 +260,6 @@ public class Model extends Thread implements  Contract.ModelMVP {
         }
     }
 
-    private void showToast(String message) {
-        //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void desconectar() {
@@ -320,4 +295,7 @@ public class Model extends Thread implements  Contract.ModelMVP {
         return true;
     }
 
+    public Pava obtenerPava(){
+        return new Pava("#FF0000", "Pava 1", "Lab 266", "No disponible", 0.0, false);
+    }
 }

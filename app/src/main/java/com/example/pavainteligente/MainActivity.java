@@ -17,11 +17,9 @@ public class MainActivity extends Activity implements ContratoMain.ViewMain {
 
     private ProgressDialog mProgressDlg;
     private ContratoMain.PresenterMain presenter;
-    private Pava elements;
     private Button btnPava;
     TextView Dispositivos;
     ProgressBar prog_shake;
-
 
 
     @Override
@@ -51,9 +49,7 @@ public class MainActivity extends Activity implements ContratoMain.ViewMain {
     private View.OnClickListener btnPavaListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            elements = new Pava();
             Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
-            intent.putExtra("Pava", elements);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 startActivity(intent);
             }
@@ -100,7 +96,6 @@ public class MainActivity extends Activity implements ContratoMain.ViewMain {
     @Override
     public void cambiarBarra(int valor) {
         prog_shake.setProgress(valor);
-
     }
 
 }

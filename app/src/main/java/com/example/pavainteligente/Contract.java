@@ -12,23 +12,29 @@ public interface Contract {
         void onItemClick(Pava item);
 
         void lanzar(Context mainView);
-
+        void notificarView(String string);
         Pava setString(Pava element);
     }
 
     interface ModelMVP{
+        Pava obtenerPava();
+
         interface OnSendToPresenter{
             void onFinished(Pava element);
         }
-        void sendMessage(Contract.ModelMVP.OnSendToPresenter presenter,Context context);
+
+        boolean validarBluetoothEncendido(Presenter presenter);
+        void sendMessage(Contract.ModelMVP.OnSendToPresenter presenter);
         void desconectar();
     }
 
     interface PresenterMVP{
         void onButtonClick(Context context);
+        void notificar(String string);
         void onDestroy();
+        boolean validarBluetoothEncendidoPresenter();
 
-
+        Pava getPava();
     }
 
 }

@@ -6,7 +6,6 @@ public class Presenter  implements Contract.ModelMVP.OnSendToPresenter, Contract
 
     private Contract.ViewMVP mView;
     private final Contract.ModelMVP model;
-    private boolean conexion = false;
 
 
     public Presenter(Contract.ViewMVP mainView){
@@ -21,13 +20,31 @@ public class Presenter  implements Contract.ModelMVP.OnSendToPresenter, Contract
 
     @Override
     public void onButtonClick(Context context) {
-        this.model.sendMessage( this,context);
+        this.model.sendMessage( this);
+    }
+
+    @Override
+    public void notificar(String mensaje) {
+        this.mView.notificarView(mensaje);
     }
 
 
     public void onDestroy() {
         this.model.desconectar();
         this.mView = null;
+    }
+
+    @Override
+    public boolean validarBluetoothEncendidoPresenter() {
+        if(this.model.validarBluetoothEncendido( this)){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Pava getPava() {
+        return this.model.obtenerPava();
     }
 
 }
