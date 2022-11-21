@@ -67,6 +67,16 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (presenter.validarBluetoothEncendidoPresenter()) {
+            switchButton.setEnabled(true);
+        } else {
+            switchButton.setEnabled(false);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if(presenter.validarBluetoothEncendidoPresenter()){
@@ -77,8 +87,8 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
     }
 
     public void onDestroy() {
-        presenter.onDestroy();
         super.onDestroy();
+        presenter.onDestroy();
     }
 
     private View.OnClickListener btnPavaListener = new View.OnClickListener() {
@@ -93,32 +103,26 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
 
     @Override
     public void cambiarColorR() {
-
     }
 
     @Override
     public void cambiarColorB() {
-
     }
 
     @Override
     public void cambiarColorY() {
-
     }
 
     @Override
     public void cambiarBarra(int valor) {
-
     }
 
     @Override
     public void onItemClick(Pava item) {
-
     }
 
     @Override
     public void lanzar(Context mainView) {
-
     }
 
     @Override

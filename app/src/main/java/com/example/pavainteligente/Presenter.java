@@ -22,7 +22,6 @@ public class Presenter  implements Contract.ModelMVP.OnSendToPresenter, Contract
         this.model = new Model(this, this.mView);
         this.mainView1 = (MainActivity) mainView;
         setUpSensormanager();
-        listener();
 
     }
 
@@ -72,16 +71,15 @@ public class Presenter  implements Contract.ModelMVP.OnSendToPresenter, Contract
     public void setUpSensormanager() {
         mSensormanager = (SensorManager) this.mainView1.getSystemService(Context.SENSOR_SERVICE);
         acelerometro=mSensormanager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        listener();
     }
 
     @Override
     public void listener() {
         mSensormanager.registerListener(sensorEventListener, acelerometro, SensorManager.SENSOR_DELAY_NORMAL);
-
     }
+
     private SensorEventListener sensorEventListener=new SensorEventListener() {
-
-
         @Override
         public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];

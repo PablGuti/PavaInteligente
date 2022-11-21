@@ -36,7 +36,6 @@ public class Model extends Thread implements Contract.ModelMVP {
     private Presenter presenter;
     private Contract.ViewMVP view;
     private BluetoothDevice device;
-    private int aux = 0;
     private final String[] permissions = new String[]{
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
@@ -57,26 +56,19 @@ public class Model extends Thread implements Contract.ModelMVP {
         this.view = view;
         checkPermissions();
         this.element = obtenerPava();
-
     }
 
     @Override
     public void sendMessage(OnSendToPresenter presenter) {
-        if (!verificarConexion() && aux<2) {
-            System.out.println("soy el aux !!!!!!-......................");
-            System.out.println(aux);
+        if (!element.getSwitchStatus()) {
             try {
-                aux=2;
                 inicializaBluetooth();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             encender();
-
         } else {
-            aux=0;
             apagar();
-            element.switchStatus = false;
         }
         presenter.onFinished(element);
     }
@@ -118,7 +110,7 @@ public class Model extends Thread implements Contract.ModelMVP {
     }
 
     public boolean estadoPava() {
-        if (btSocket.isConnected()) {
+        if (verificarConexion() && btSocket.isConnected()) {
             return true;
         } else
             return false;
@@ -140,14 +132,16 @@ public class Model extends Thread implements Contract.ModelMVP {
                 btSocket.close();
             }
             i++;
-        }while (!btSocket.isConnected() && i<5);
+        }while (!btSocket.isConnected() && i<3);
         mConnectedThread = new ConnectedThread(btSocket);
         mConnectedThread.start();
     }
 
     //Llamar cuando se ejecute el onPause en la view
     public void cerrarSocket() throws IOException {
-        btSocket.close();
+        if(estadoPava()){
+            btSocket.close();
+        }
     }
 
 
@@ -160,7 +154,6 @@ public class Model extends Thread implements Contract.ModelMVP {
                 //si se recibio un msj del hilo secundario
                 if (msg.what == handlerState)
                 {
-
                     String readMessage = (String) msg.obj;
                     recDataString.append(readMessage);
                     int endOfLineIndex = recDataString.indexOf("\r\n");
@@ -168,7 +161,6 @@ public class Model extends Thread implements Contract.ModelMVP {
                     if (endOfLineIndex > 0)
                     {
                         String dataInPrint = recDataString.substring(0, endOfLineIndex);
-
                         element.setTemperature(Double.parseDouble(dataInPrint));
                         presenter.onFinished(element);
                         recDataString.delete(0, recDataString.length());
@@ -187,20 +179,22 @@ public class Model extends Thread implements Contract.ModelMVP {
     public void apagar(){
         element.setSwitchStatus(false);
         mConnectedThread.write("a");
+        try {
+            cerrarSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
 
     /////////////////////////////////////CLASES SOPORTE PARA CONECTAR BLUETOOTH//////////////////////////////////////
     private class ConnectedThread extends Thread {
-
         //Constructor de la clase del hilo secundario
         public ConnectedThread(BluetoothSocket socket) {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-
             try {
-                //Create I/O streams for connection
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
@@ -221,27 +215,19 @@ public class Model extends Thread implements Contract.ModelMVP {
                     //se leen los datos del Bluethoot
                     bytes = mBTInputStream.read(buffer);
                     String readMessage = new String(buffer, 0, bytes);
-
                     bluetoothIn.obtainMessage(handlerState,bytes,-1,readMessage).sendToTarget();
-
-
-
                 } catch (IOException e) {
                     break;
                 }
             }
         }
 
-
-        //write method
         public void write(String input) {
             byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
             try {
                 mBTOutputStream.write(msgBuffer);                //write bytes over BT connection via outstream
             } catch (IOException e) {
-                //if you cannot write, close the application
-                // showToast("La conexion fallo");
-                //finish();
+
             }
         }
     }
@@ -249,11 +235,13 @@ public class Model extends Thread implements Contract.ModelMVP {
 
     @Override
     public void desconectar() {
-        apagar();
-        try {
-            cerrarSocket();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(estadoPava()){
+            apagar();
+            try {
+                cerrarSocket();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -262,13 +250,11 @@ public class Model extends Thread implements Contract.ModelMVP {
         int result;
         List<String> listPermissionsNeeded = new ArrayList<>();
 
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
 
         for (String p:permissions) {
-            //CustomPermission needed;//:BT_PERMISSIONS_NEEDED
             result = checkSelfPermission((Context) view,p);
             if (result != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(p);

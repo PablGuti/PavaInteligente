@@ -15,12 +15,10 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements Contract.ViewMVP {
 
-    private ProgressDialog mProgressDlg;
     private Contract.PresenterMVP presenter;
     private Button btnPava;
     private TextView Dispositivos;
     private ProgressBar prog_shake;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +29,19 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
         Dispositivos=findViewById(R.id.dispositivos);
         prog_shake=findViewById(R.id.prog_shake);
         presenter = new Presenter(this, this.toString());
-
     }
 
     @Override
     protected void onResume() {
-        presenter.setUpSensormanager();
         super.onResume();
+        presenter.setUpSensormanager();
+        //presenter.listener();
     }
 
     public void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
     }
-
 
     private View.OnClickListener btnPavaListener = new View.OnClickListener() {
         @Override
@@ -80,7 +77,6 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
     protected void onPause() {
         presenter.onpausa();
         super.onPause();
-
     }
 
     @Override
