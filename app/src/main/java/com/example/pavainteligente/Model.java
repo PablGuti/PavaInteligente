@@ -57,50 +57,8 @@ public class Model extends Thread implements Contract.ModelMVP {
         this.view = view;
         checkPermissions();
         this.element = obtenerPava();
-        //validarConexion();
+
     }
-
-    @Override
-    public boolean validarBluetoothEncendido(Presenter presenter){
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!btAdapter.isEnabled()){
-            presenter.notificar("No esta encendido el bluetooth");
-            return false;
-        }
-        return true;
-    }
-
-    @SuppressLint("MissingPermission")
-    private boolean validarConexion() {
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        //address = "00:21:11:01:B7:6E";//extras.getString("Direccion_Bluethoot"); //MAC 35:0B:68:DA:0A:2F
-        device = btAdapter.getRemoteDevice(Constants.address);
-
-        ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
-
-        //Obtenemos todos los dispositivos bluetooth
-        //vinculados
-        for (BluetoothDevice d : btAdapter.getBondedDevices()) {
-            if (d.getAddress().equals(Constants.address)) {
-                devices.add(d);
-            }
-        }
-        return true;
-    }
-
-
-    public Model(PresenterMain presenterMain, ContratoMain.ViewMain mView) {
-    }
-    // Closes the client socket and causes the thread to finish.
-    public void cancel() {
-        try {
-            btSocket.close();
-        } catch (IOException e) {
-            Log.e("ERROR", "Could not close the client socket", e);
-        }
-    }
-
-
 
     @Override
     public void sendMessage(OnSendToPresenter presenter) {
@@ -116,12 +74,41 @@ public class Model extends Thread implements Contract.ModelMVP {
             encender();
 
         } else {
-                aux=0;
-                apagar();
-                element.switchStatus = false;
+            aux=0;
+            apagar();
+            element.switchStatus = false;
         }
         presenter.onFinished(element);
     }
+
+
+    @Override
+    public boolean validarBluetoothEncendido(Presenter presenter){
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!btAdapter.isEnabled()){
+            presenter.notificar("No esta encendido el bluetooth");
+            return false;
+        }
+        return true;
+    }
+
+    @SuppressLint("MissingPermission")
+    public boolean validarConexion() {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        //address = "00:21:11:01:B7:6E";//extras.getString("Direccion_Bluethoot"); //MAC 35:0B:68:DA:0A:2F
+        device = btAdapter.getRemoteDevice(Constants.address);
+
+        //Obtenemos todos los dispositivos bluetooth
+        //vinculados
+        for (BluetoothDevice d : btAdapter.getBondedDevices()) {
+            if (d.getAddress().equals(Constants.address)) {
+                return true;
+            }
+        }
+        presenter.notificar("No esta conectado a el HC-05 correcto");
+        return false;
+    }
+
 
     public boolean verificarConexion() {
         if (btSocket==null) {
@@ -173,16 +160,15 @@ public class Model extends Thread implements Contract.ModelMVP {
                 //si se recibio un msj del hilo secundario
                 if (msg.what == handlerState)
                 {
-                    //voy concatenando el msj
+
                     String readMessage = (String) msg.obj;
                     recDataString.append(readMessage);
                     int endOfLineIndex = recDataString.indexOf("\r\n");
 
-                    //cuando recibo toda una linea la muestro en el layout
                     if (endOfLineIndex > 0)
                     {
                         String dataInPrint = recDataString.substring(0, endOfLineIndex);
-                        //txtPotenciometro.setText(dataInPrint);
+
                         element.setTemperature(Double.parseDouble(dataInPrint));
                         presenter.onFinished(element);
                         recDataString.delete(0, recDataString.length());
@@ -194,12 +180,12 @@ public class Model extends Thread implements Contract.ModelMVP {
     }
 
     public void encender(){
-        element.switchStatus = true;
+        element.setSwitchStatus(true);
         mConnectedThread.write("c");
     }
 
     public void apagar(){
-        element.switchStatus = false;
+        element.setSwitchStatus(false);
         mConnectedThread.write("a");
     }
 

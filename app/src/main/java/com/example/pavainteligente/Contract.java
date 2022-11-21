@@ -24,6 +24,7 @@ public interface Contract {
         }
 
         boolean validarBluetoothEncendido(Presenter presenter);
+        boolean validarConexion();
         void sendMessage(Contract.ModelMVP.OnSendToPresenter presenter);
         void desconectar();
     }
@@ -33,7 +34,9 @@ public interface Contract {
         void notificar(String string);
         void onDestroy();
         boolean validarBluetoothEncendidoPresenter();
-
+        void setUpSensormanager();
+        void listener();
+        public void onpausa();
         Pava getPava();
     }
 

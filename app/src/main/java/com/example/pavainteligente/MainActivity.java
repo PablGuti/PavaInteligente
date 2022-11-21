@@ -13,13 +13,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity implements ContratoMain.ViewMain {
+public class MainActivity extends Activity implements Contract.ViewMVP {
 
     private ProgressDialog mProgressDlg;
-    private ContratoMain.PresenterMain presenter;
+    private Contract.PresenterMVP presenter;
     private Button btnPava;
-    TextView Dispositivos;
-    ProgressBar prog_shake;
+    private TextView Dispositivos;
+    private ProgressBar prog_shake;
 
 
     @Override
@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements ContratoMain.ViewMain {
         btnPava.setOnClickListener(btnPavaListener);
         Dispositivos=findViewById(R.id.dispositivos);
         prog_shake=findViewById(R.id.prog_shake);
-        presenter = new PresenterMain(this);
+        presenter = new Presenter(this, this.toString());
 
     }
 
@@ -64,6 +64,11 @@ public class MainActivity extends Activity implements ContratoMain.ViewMain {
 
     @Override
     public void lanzar(Context mainView) {
+
+    }
+
+    @Override
+    public void notificarView(String string) {
 
     }
 
