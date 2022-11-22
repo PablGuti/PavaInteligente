@@ -12,7 +12,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
+
 
 import androidx.core.app.ActivityCompat;
 
@@ -148,7 +148,7 @@ public class Model extends Thread implements Contract.ModelMVP {
         return new Handler() {
             public void handleMessage(android.os.Message msg)
             {
-                //si se recibio un msj del hilo secundario
+
                 if (msg.what == handlerState)
                 {
                     String readMessage = (String) msg.obj;
@@ -206,10 +206,9 @@ public class Model extends Thread implements Contract.ModelMVP {
             byte[] buffer = new byte[5];
             int bytes;
 
-            //el hilo secundario se queda esperando mensajes del HC05
+
             while (true) {
                 try {
-                    //se leen los datos del Bluethoot
                     bytes = mBTInputStream.read(buffer);
                     String readMessage = new String(buffer, 0, bytes);
                     bluetoothIn.obtainMessage(handlerState,bytes,-1,readMessage).sendToTarget();
@@ -220,9 +219,9 @@ public class Model extends Thread implements Contract.ModelMVP {
         }
 
         public void write(String input) {
-            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
+            byte[] msgBuffer = input.getBytes();
             try {
-                mBTOutputStream.write(msgBuffer);                //write bytes over BT connection via outstream
+                mBTOutputStream.write(msgBuffer);
             } catch (IOException e) {
 
             }

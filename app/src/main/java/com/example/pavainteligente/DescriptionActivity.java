@@ -31,8 +31,7 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         setContentView(R.layout.activity_description);
         presenter = new Presenter(this);
         elemento = presenter.getPava();
-        //element = setString(element);
-        //Pava element = (Pava) getIntent().getSerializableExtra("Pava");
+
         titleDescriptionTextView = findViewById(R.id.titleDescriptionTextView);
         houseDescriptionTextView = findViewById(R.id.houseDescriptionTextView);
         statusDescriptionTextView = findViewById(R.id.statusDescriptionTextView);
@@ -43,7 +42,6 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         titleDescriptionTextView.setText(elemento.getName());
         houseDescriptionTextView.setText(elemento.getHouse());
         statusDescriptionTextView.setText(elemento.getStatus());
-        //switchButton.setChecked(element.getSwitchStatus());
         switchButton.setOnClickListener(btnPavaListener);
         setImagen();
 
