@@ -31,7 +31,6 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         setContentView(R.layout.activity_description);
         presenter = new Presenter(this);
         elemento = presenter.getPava();
-
         titleDescriptionTextView = findViewById(R.id.titleDescriptionTextView);
         houseDescriptionTextView = findViewById(R.id.houseDescriptionTextView);
         statusDescriptionTextView = findViewById(R.id.statusDescriptionTextView);
@@ -118,13 +117,6 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
     public void cambiarBarra(int valor) {
     }
 
-    @Override
-    public void onItemClick(Pava item) {
-    }
-
-    @Override
-    public void lanzar(Context mainView) {
-    }
 
     @Override
     public void notificarView(String string) {

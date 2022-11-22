@@ -9,9 +9,7 @@ public interface Contract {
         void cambiarColorB();
         void cambiarColorY();
         void cambiarBarra(int valor);
-        void onItemClick(Pava item);
 
-        void lanzar(Context mainView);
         void notificarView(String string);
         Pava setString(Pava element);
     }
@@ -36,7 +34,7 @@ public interface Contract {
         boolean validarBluetoothEncendidoPresenter();
         void setUpSensormanager();
         void listener();
-        public void onpausa();
+        void onpausa();
         Pava getPava();
     }
 

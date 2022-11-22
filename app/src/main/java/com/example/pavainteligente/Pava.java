@@ -19,16 +19,6 @@ public class Pava implements Serializable {
         this.switchStatus = switchStatus;
     }
 
-    public Pava() {
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
 
     public String getName() {
         return name;
@@ -42,16 +32,8 @@ public class Pava implements Serializable {
         return house;
     }
 
-    public void setHouse(String house) {
-        this.house = house;
-    }
-
     public String getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public Double getTemperature() {
@@ -59,7 +41,7 @@ public class Pava implements Serializable {
     }
 
     public void setTemperature(Double temperature) {
-        this.temperature = (( temperature)*100)/(1024*2); //-50;
+        this.temperature = (( temperature)*100)/(1024*2);
     }
 
     public Boolean getSwitchStatus() {

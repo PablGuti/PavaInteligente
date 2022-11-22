@@ -35,7 +35,6 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
     protected void onResume() {
         super.onResume();
         presenter.setUpSensormanager();
-        //presenter.listener();
     }
 
     public void onDestroy() {
@@ -53,16 +52,6 @@ public class MainActivity extends Activity implements Contract.ViewMVP {
         }
     };
 
-
-    @Override
-    public void onItemClick(Pava item) {
-
-    }
-
-    @Override
-    public void lanzar(Context mainView) {
-
-    }
 
     @Override
     public void notificarView(String string) {

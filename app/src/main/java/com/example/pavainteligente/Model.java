@@ -134,7 +134,6 @@ public class Model extends Thread implements Contract.ModelMVP {
         mConnectedThread.start();
     }
 
-    //Llamar cuando se ejecute el onPause en la view
     public void cerrarSocket() throws IOException {
         if(estadoPava()){
             btSocket.close();
@@ -185,9 +184,8 @@ public class Model extends Thread implements Contract.ModelMVP {
 
 
 
-    /////////////////////////////////////CLASES SOPORTE PARA CONECTAR BLUETOOTH//////////////////////////////////////
+
     private class ConnectedThread extends Thread {
-        //Constructor de la clase del hilo secundario
         public ConnectedThread(BluetoothSocket socket) {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -201,7 +199,7 @@ public class Model extends Thread implements Contract.ModelMVP {
             mBTOutputStream = tmpOut;
         }
 
-        //metodo run del hilo, que va a entrar en una espera activa para recibir los msjs del HC05
+
         public void run() {
             byte[] buffer = new byte[5];
             int bytes;
@@ -241,7 +239,6 @@ public class Model extends Thread implements Contract.ModelMVP {
         }
     }
 
-    //Metodo que chequea si estan habilitados los permisos
     private  boolean checkPermissions() {
         int result;
         List<String> listPermissionsNeeded = new ArrayList<>();
