@@ -12,8 +12,7 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DescriptionActivity extends AppCompatActivity implements Contract.ViewMVP {
-    final static double TEMPERATURA_MEDIA = 197.26;
-    final static double TEMPERATURA_ALTA = 389.45;
+
     private Contract.PresenterMVP presenter;
     private Pava element;
     //private Pava element = new Pava("#FF0000", "Pava 1", "Lab 266", "Disponible", 0.0, false);
@@ -46,24 +45,8 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         statusDescriptionTextView.setText(element.getStatus());
         //switchButton.setChecked(element.getSwitchStatus());
         switchButton.setOnClickListener(btnPavaListener);
+        setImagen();
 
-        if(statusDescriptionTextView.getText().equals("Desconectado")) {
-            switchButton.setEnabled(false);
-            tempDescriptionTextView.setText("--");
-            iconImageView.setImageResource(R.drawable.humidity_low_fill0_wght400_grad0_opsz48);
-        } else {
-            temperatura = element.getTemperature();
-
-            tempDescriptionTextView.setText(String.format("%.2f", temperatura));
-
-            if (temperatura > TEMPERATURA_MEDIA && temperatura < TEMPERATURA_ALTA) {
-                iconImageView.setImageResource(R.drawable.temp_preferences_custom_fill0_wght400_grad0_opsz48);
-            } else if (temperatura > TEMPERATURA_ALTA) {
-                iconImageView.setImageResource(R.drawable.emergency_heat_fill0_wght400_grad0_opsz48);
-            } else {
-                iconImageView.setImageResource(R.drawable.ac_unit_fill0_wght400_grad0_opsz48);
-            }
-        }
     }
 
     @Override
@@ -101,6 +84,26 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
 
     };
 
+    private void setImagen(){
+        if(statusDescriptionTextView.getText().equals("Desconectado")) {
+            switchButton.setEnabled(false);
+            tempDescriptionTextView.setText("--");
+            iconImageView.setImageResource(R.drawable.humidity_low_fill0_wght400_grad0_opsz48);
+        } else {
+            temperatura = element.getTemperature();
+            temperatura = element.setTemperature(temperatura);
+            tempDescriptionTextView.setText(String.format("%.2f", temperatura));
+
+            if (temperatura > Constants.TEMPERATURA_MEDIA && temperatura < Constants.TEMPERATURA_ALTA) {
+                iconImageView.setImageResource(R.drawable.temp_preferences_custom_fill0_wght400_grad0_opsz48);
+            } else if (temperatura > Constants.TEMPERATURA_ALTA) {
+                iconImageView.setImageResource(R.drawable.emergency_heat_fill0_wght400_grad0_opsz48);
+            } else {
+                iconImageView.setImageResource(R.drawable.ac_unit_fill0_wght400_grad0_opsz48);
+            }
+        }
+    }
+
     @Override
     public void cambiarColorR() {
     }
@@ -133,6 +136,7 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
     @Override
     public Pava setString(Pava element) {
         tempDescriptionTextView.setText(String.format("%.2f", element.getTemperature()));
+        setImagen();
         return element;
     }
 

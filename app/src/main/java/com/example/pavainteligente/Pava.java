@@ -58,8 +58,8 @@ public class Pava implements Serializable {
         return temperature;
     }
 
-    public void setTemperature(Double temperature) {
-        this.temperature = ((5.0 / 1024 * temperature)*100)-50;
+    public Double setTemperature(Double temperature) {
+        return this.temperature = ((1.1 / 1024 * temperature)*100); //-50;
     }
 
     public Boolean getSwitchStatus() {

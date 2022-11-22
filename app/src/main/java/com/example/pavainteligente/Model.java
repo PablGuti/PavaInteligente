@@ -87,11 +87,8 @@ public class Model extends Thread implements Contract.ModelMVP {
     @SuppressLint("MissingPermission")
     public boolean validarConexion() {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        //address = "00:21:11:01:B7:6E";//extras.getString("Direccion_Bluethoot"); //MAC 35:0B:68:DA:0A:2F
         device = btAdapter.getRemoteDevice(Constants.address);
 
-        //Obtenemos todos los dispositivos bluetooth
-        //vinculados
         for (BluetoothDevice d : btAdapter.getBondedDevices()) {
             if (d.getAddress().equals(Constants.address)) {
                 return true;
