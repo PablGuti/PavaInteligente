@@ -9,6 +9,6 @@ public class Constants {
 
     // SPP UUID service  - Funciona en la mayoria de los dispositivos
     public static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    public final static double TEMPERATURA_MEDIA = 197.26;
-    public final static double TEMPERATURA_ALTA = 389.45;
+    public final static double TEMPERATURA_MEDIA = 26.8;
+    public final static double TEMPERATURA_ALTA = 29.2;
 }

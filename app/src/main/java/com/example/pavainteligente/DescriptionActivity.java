@@ -1,8 +1,8 @@
 package com.example.pavainteligente;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,11 +11,11 @@ import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 public class DescriptionActivity extends AppCompatActivity implements Contract.ViewMVP {
 
     private Contract.PresenterMVP presenter;
-    private Pava element;
-    //private Pava element = new Pava("#FF0000", "Pava 1", "Lab 266", "Disponible", 0.0, false);
+    private Pava elemento;
     TextView titleDescriptionTextView;
     TextView houseDescriptionTextView;
     TextView statusDescriptionTextView;
@@ -30,7 +30,7 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
         presenter = new Presenter(this);
-        element = presenter.getPava();
+        elemento = presenter.getPava();
         //element = setString(element);
         //Pava element = (Pava) getIntent().getSerializableExtra("Pava");
         titleDescriptionTextView = findViewById(R.id.titleDescriptionTextView);
@@ -40,9 +40,9 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
         iconImageView = findViewById(R.id.iconImageView);
         switchButton = findViewById(R.id.switchButton);
 
-        titleDescriptionTextView.setText(element.getName());
-        houseDescriptionTextView.setText(element.getHouse());
-        statusDescriptionTextView.setText(element.getStatus());
+        titleDescriptionTextView.setText(elemento.getName());
+        houseDescriptionTextView.setText(elemento.getHouse());
+        statusDescriptionTextView.setText(elemento.getStatus());
         //switchButton.setChecked(element.getSwitchStatus());
         switchButton.setOnClickListener(btnPavaListener);
         setImagen();
@@ -90,8 +90,8 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
             tempDescriptionTextView.setText("--");
             iconImageView.setImageResource(R.drawable.humidity_low_fill0_wght400_grad0_opsz48);
         } else {
-            temperatura = element.getTemperature();
-            temperatura = element.setTemperature(temperatura);
+
+            temperatura = elemento.getTemperature();
             tempDescriptionTextView.setText(String.format("%.2f", temperatura));
 
             if (temperatura > Constants.TEMPERATURA_MEDIA && temperatura < Constants.TEMPERATURA_ALTA) {
@@ -135,6 +135,7 @@ public class DescriptionActivity extends AppCompatActivity implements Contract.V
 
     @Override
     public Pava setString(Pava element) {
+        elemento = element;
         tempDescriptionTextView.setText(String.format("%.2f", element.getTemperature()));
         setImagen();
         return element;
