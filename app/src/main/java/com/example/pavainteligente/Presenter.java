@@ -22,7 +22,6 @@ public class Presenter  implements Contract.ModelMVP.OnSendToPresenter, Contract
         this.model = new Model(this, this.mView);
         this.mainView1 = (MainActivity) mainView;
         setUpSensormanager();
-
     }
 
     public Presenter(Contract.ViewMVP mainView){
